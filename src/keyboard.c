@@ -23,6 +23,20 @@ hotkey_combo_t hotkeys[] = {
      .pass_to_os     = false,
      .action_handler = &output_toggle_hotkey_handler},
 
+    /* F19 keyboard switching hotkey */
+    {.modifier       = 0,
+     .keys           = {HID_KEY_F19},
+     .key_count      = 1,
+     .pass_to_os     = false,
+     .action_handler = &output_toggle_hotkey_handler},
+
+    /* Left shift + tab keyboard switching hotkey */
+    {.modifier       = KEYBOARD_MODIFIER_LEFTSHIFT,
+     .keys           = {HID_KEY_TAB},
+     .key_count      = 1,
+     .pass_to_os     = false,
+     .action_handler = &output_toggle_hotkey_handler},
+
     /* Pressing right ALT + right CTRL toggles the slow mouse mode */
     {.modifier       = KEYBOARD_MODIFIER_RIGHTALT | KEYBOARD_MODIFIER_RIGHTCTRL,
      .keys           = {},
@@ -375,12 +389,12 @@ void process_system_report(uint8_t *raw_report, int length, uint8_t itf, hid_int
 }
 
 keyboard_t *get_keyboard(hid_interface_t *iface, uint8_t report_id) {
-    /* When we have just one keyboard (most cases), or don't use report ID */
-    if (iface->num_keyboards == 1 || !iface->uses_report_id)
+    /* Without report IDs, all keyboard data belongs to the primary keyboard. */
+    if (!iface->uses_report_id)
         return &iface->keyboards[PRIMARY_KEYBOARD];
 
-    /* Go through known keyboards and match on report ID, return pointer to keyboard_t */
-    for (int i = 0; i < iface->num_keyboards && i < MAX_KEYBOARDS; i++) {
+    /* Include the next slot, whose report ID is assigned before it is marked found. */
+    for (int i = 0; i < MAX_KEYBOARDS && i <= iface->num_keyboards; i++) {
         if (iface->keyboards[i].report_id == report_id) {
             return &iface->keyboards[i];
         }

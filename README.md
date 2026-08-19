@@ -124,7 +124,7 @@ To make use of this feature, first set up the OS for each output in config (sinc
 
 ### Gaming Mode
 
-If you're gaming, there is a chance your game might not work properly with absolute mouse mode. To address that issue, a **gaming mode** is introduced, toggled by ```LEFT CTRL + RIGHT SHIFT + G```. When in gaming mode, you are locked to the current screen and your mouse behaves like a standard relative mouse. This should also fix various virtual machine issues, currently unsupported operating systems etc.
+If you're gaming, there is a chance your game might not work properly with absolute mouse mode. To address that issue, **gaming mode is enabled by default** and can be toggled by ```LEFT CTRL + RIGHT SHIFT + G```. When in gaming mode, you are locked to the current screen and your mouse behaves like a standard relative mouse. This should also fix various virtual machine issues, currently unsupported operating systems etc.
 
 ### Screensaver
 
@@ -246,7 +246,7 @@ _Usage_:
 - ~~```Left Shift```~~ ```Left CTRL + Right Shift + G``` - Toggle gaming mode (lock to screen, act as standard mouse)
 - ```Left CTRL + Right Shift + S``` - Enable screensaver
 - ```Left CTRL + Right Shift + X``` - Disable screensaver
-- ```Left CTRL + Caps Lock``` - Switch between outputs
+- ```Left CTRL + Caps Lock```, ```F19```, or ```Left Shift + Tab``` - Switch between outputs
 
 Note: some keyboards don't send both shifts at the same time properly, that's why the shortcut was changed - to work for everyone. Apologies for the confusion.
 
