@@ -388,18 +388,38 @@ void process_system_report(uint8_t *raw_report, int length, uint8_t itf, hid_int
     }
 }
 
+/* Look up a registered report ID, falling back to the primary keyboard if unknown. */
 keyboard_t *get_keyboard(hid_interface_t *iface, uint8_t report_id) {
-    /* Without report IDs, all keyboard data belongs to the primary keyboard. */
     if (!iface->uses_report_id)
         return &iface->keyboards[PRIMARY_KEYBOARD];
 
-    /* Include the next slot, whose report ID is assigned before it is marked found. */
-    for (int i = 0; i < MAX_KEYBOARDS && i <= iface->num_keyboards; i++) {
-        if (iface->keyboards[i].report_id == report_id) {
+    for (int i = 0; i < iface->num_keyboards && i < MAX_KEYBOARDS; i++) {
+        if (iface->keyboards[i].report_id == report_id)
             return &iface->keyboards[i];
-        }
     }
 
     /* If nothing else is matched, return the primary keyboard. */
     return &iface->keyboards[PRIMARY_KEYBOARD];
+}
+
+/* Parse-time counterpart: return the next free slot for an unseen report ID. The caller
+    commits that slot by increasing num_keyboards after processing a descriptor value. */
+keyboard_t *get_or_add_keyboard(hid_interface_t *iface, uint8_t report_id) {
+    if (!iface->uses_report_id)
+        return &iface->keyboards[PRIMARY_KEYBOARD];
+
+    for (int i = 0; i < iface->num_keyboards && i < MAX_KEYBOARDS; i++) {
+        if (iface->keyboards[i].report_id == report_id)
+            return &iface->keyboards[i];
+    }
+
+    if (iface->num_keyboards >= MAX_KEYBOARDS)
+        return &iface->keyboards[PRIMARY_KEYBOARD];
+
+    keyboard_t *kb = &iface->keyboards[iface->num_keyboards];
+
+    kb->report_id      = report_id;
+    kb->uses_report_id = true;
+
+    return kb;
 }
